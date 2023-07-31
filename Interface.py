@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import ShifoumiRR
+import Shifoumi
 
 UserPoint = 0
 RobotPoint = 0
@@ -34,16 +34,16 @@ while True:
     if event == sg.WIN_CLOSED:
         break
 
-    # Handle button events
+    # Choix du joeur, PointJoueur, PointJoueur
     match event:
         case "Pierre":
-            Resultat, UserPoint, RobotPoint = ShifoumiRR.Game(
+            Resultat, UserPoint, RobotPoint = Shifoumi.Game(
                 "Pierre", UserPoint, RobotPoint)
         case "Feuille":
-            Resultat, UserPoint, RobotPoint = ShifoumiRR.Game(
+            Resultat, UserPoint, RobotPoint = Shifoumi.Game(
                 "Feuille", UserPoint, RobotPoint)
         case "Ciseaux":
-            Resultat, UserPoint, RobotPoint = ShifoumiRR.Game(
+            Resultat, UserPoint, RobotPoint = Shifoumi.Game(
                 "Ciseaux", UserPoint, RobotPoint)
 
     window["output"].update(f"{Resultat}   Points : {UserPoint}/{RobotPoint}")
