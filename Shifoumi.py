@@ -6,49 +6,83 @@ Resultat = ""
 
 
 def Game(ChoixJoueur, UserPoint, RobotPoint):
+    """
+    Simulate a single round of the Rock-Paper-Scissors game and update the game results.
+
+    Parameters:
+        ChoixJoueur (str): The player's choice among "Rock", "Paper", or "Scissors".
+        UserPoint (int): The current score of the player.
+        RobotPoint (int): The current score of the robot.
+
+    Returns:
+        tuple: A tuple containing four values:
+            - Resultat (str): The result of the game, can be "Won !", "Lost !", or "Draw !".
+            - UserPoint (int): Updated score of the player after the round.
+            - RobotPoint (int): Updated score of the robot after the round.
+            - RobotChoice (str): The robot's choice among "Rock", "Paper", or "Scissors".
+    """
+    Actions = ["Rock", "Paper", "Scissors"]
+    # Select RobotChoice between "Actions"
     RobotChoice = random.choice(Actions)
 
+    # Checking the result of the game
     if ChoixJoueur == RobotChoice:
-        Resultat = "Match nul !"
+        Resultat = "Draw !"
     elif ChoixJoueur == "Rock" and RobotChoice == "Scissors":
-        Resultat = "Gagné !"
+        Resultat = "Won !"
         UserPoint += 1
     elif ChoixJoueur == "Paper" and RobotChoice == "Rock":
-        Resultat = "Gagné !"
+        Resultat = "Won !"
         UserPoint += 1
     elif ChoixJoueur == "Scissors" and RobotChoice == "Paper":
-        Resultat = "Gagné !"
+        Resultat = "Won !"
         UserPoint += 1
     else:
         RobotPoint += 1
-        Resultat = "Perdu !"
-    JoueurNumber, RobotNumber, Resultatnumber = Switch(
-        ChoixJoueur, RobotChoice, Resultat)
+        Resultat = "Lost !"
+
+    JoueurNumber, RobotNumber, Resultatnumber = Switch(ChoixJoueur, RobotChoice, Resultat)
     MaJExcel(JoueurNumber, RobotNumber, Resultatnumber)
-    print("RobotChoice = ",RobotChoice)
+
     return Resultat, UserPoint, RobotPoint, RobotChoice
+
 
 def MaJExcel(ChoixJoueur, RobotChoice, Result):
     """
-    ChoixJoueur : 0-Rock 1-Paper 2-Scissors
-    RobotChoice : 0-Rock 1-Paper 2-Scissors
-    Result      : 0-Perdu  1-Gagné   2-Egalité (Résultat du point de vue du robot)
+    Update the Excel file 'ResultatParties.xlsx' with the game results.
+
+    Parameters:
+        ChoixJoueur (int): Numerical representation of the player's choice (0 for Rock, 1 for Paper, 2 for Scissors).
+        RobotChoice (int): Numerical representation of the robot's choice (0 for Rock, 1 for Paper, 2 for Scissors).
+        Result (int): Numerical representation of the game result (0 for Robot Lost, 1 for Robot Won, 2 for Draw).
+
+    Returns:
+        None: The function does not return anything.
     """
-    # Ouverture du fichier
+    # Open Excel file
     classeur = openpyxl.load_workbook("ResultatParties.xlsx")
     Paper = classeur.active
 
-    # Ajouter les données
+    # Updating data
     Paper.append([ChoixJoueur, RobotChoice, Result])
     classeur.save("ResultatParties.xlsx")
 
-    # Lecture et affichage des données excel
-    donnees_excel = []
-    for ligne in Paper.iter_rows(values_only=True):
-        donnees_excel.append(list(ligne))
-    tableau_numpy = np.array(donnees_excel)
 
 def Switch(JoueurToSwitch, RobotToSwitch, ResultatToSwitch):
+    """
+    Convert the input choices and result into corresponding numerical representations.
+
+    Parameters:
+        JoueurToSwitch (str): The player's choice among "Rock", "Paper", or "Scissors".
+        RobotToSwitch (str): The robot's choice among "Rock", "Paper", or "Scissors".
+        ResultatToSwitch (str): The result of the game, can be "Won !", "Lost !", or "Draw !".
+
+    Returns:
+        tuple: A tuple containing three integer values:
+            - JoueurSwitched (int): Numerical representation of the player's choice (0 for Rock, 1 for Paper, 2 for Scissors).
+            - RobotSwitched (int): Numerical representation of the robot's choice (0 for Rock, 1 for Paper, 2 for Scissors).
+            - Switched (int): Numerical representation of the game result (0 for Robot Lost, 1 for Robot Won, 2 for Draw).
+    """
     match JoueurToSwitch:
         case "Rock":
             JoueurSwitched = 0
@@ -66,10 +100,10 @@ def Switch(JoueurToSwitch, RobotToSwitch, ResultatToSwitch):
             RobotSwitched = 2
 
     match ResultatToSwitch:
-        case "Gagné !":
-            Switched = 0  # Le robot à perdu
-        case "Perdu !":
-            Switched = 1  # Le robot à gagné
-        case "Match nul !":
-            Switched = 2  # Egalité
+        case "Won !":
+            Switched = 0  # Robot Lost
+        case "Lost !":
+            Switched = 1  # Robot Won
+        case "Draw !":
+            Switched = 2  # Draw
     return JoueurSwitched, RobotSwitched, Switched
