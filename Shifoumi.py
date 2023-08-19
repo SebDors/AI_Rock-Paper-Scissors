@@ -1,6 +1,7 @@
 import random
 import openpyxl
 import numpy as np
+import AIModel
 Actions = ["Rock", "Paper", "Scissors"]
 Resultat = ""
 
@@ -68,7 +69,7 @@ def MaJExcel(ChoixJoueur, RobotChoice, Result):
     classeur.save("ResultatParties.xlsx")
 
 
-def Switch(JoueurToSwitch, RobotToSwitch, ResultatToSwitch):
+def Switch(JoueurToSwitch=None, RobotToSwitch=None, ResultatToSwitch=None):
     """
     Convert the input choices and result into corresponding numerical representations.
 
@@ -107,3 +108,26 @@ def Switch(JoueurToSwitch, RobotToSwitch, ResultatToSwitch):
         case "Draw !":
             Switched = 2  # Draw
     return JoueurSwitched, RobotSwitched, Switched
+
+def Game2(ChoixJoueur, UserPoint, RobotPoint):
+    ChoixJoueur = Switch(ChoixJoueur)
+    RobotChoice = AIModel.predict_robot_choice(ChoixJoueur)
+    if ChoixJoueur == RobotChoice:
+        Resultat = "Draw !"
+    elif ChoixJoueur == 0 and RobotChoice == 2:  # Pierre contre Ciseaux
+        Resultat = "Won !"
+        UserPoint += 1
+    elif ChoixJoueur == 1 and RobotChoice == 0:  # Feuille contre Pierre
+        Resultat = "Won !"
+        UserPoint += 1
+    elif ChoixJoueur == 2 and RobotChoice == 1:  # Ciseaux contre Feuille
+        Resultat = "Won !"
+        UserPoint += 1
+    else:
+        RobotPoint += 1
+        Resultat = "Lost !"
+    
+    JoueurNumber, RobotNumber, Resultatnumber = Switch(ChoixJoueur, RobotChoice, Resultat)
+    MaJExcel(JoueurNumber, RobotNumber, Resultatnumber)
+    return Resultat, UserPoint, RobotPoint, RobotChoice
+

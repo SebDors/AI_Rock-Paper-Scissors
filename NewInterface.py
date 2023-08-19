@@ -121,7 +121,7 @@ while True:
         break
     if event in ['Rock', 'Paper', 'Scissors']:
         #Sending and receiving the game's result. 
-        Result, UserPoint, RobotPoint, RobotChoice = Shifoumi.Game(
+        Result, UserPoint, RobotPoint, RobotChoice = Shifoumi.Game2(
                 event, UserPoint, RobotPoint)
         ShowRobotchoice(RobotChoice)
         ColorText(Result)
