@@ -3,18 +3,19 @@ import pandas as pd
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-# Charger les données depuis le fichier Excel
-data = pd.read_excel('ResultatParties.xlsx')
+# Fonction pour entraîner le modèle
+def train_model():
+        # Charger les données depuis le fichier Excel
+    data = pd.read_excel('ResultatParties.xlsx')
 
-# Préparation des données
-X = data[['User', 'Robot']]
-y = data['Result']
-
-# Création du modèle SVC linéaire
-model = SVC(kernel='linear')
-
-# Entraînement du modèle sur toutes les données disponibles
-model.fit(X, y)
+    # Préparation des données
+    X = data[['User', 'Result']]
+    y = data['Robot']
+    print(y)
+    model = SVC(kernel='linear')
+    model.fit(X, y)
+    print("Entrainé !")
+    return model
 
 def Win_condition(choice):
     # Définir les règles de victoire en fonction du choix donné
@@ -27,6 +28,8 @@ def Win_condition(choice):
 
 # Fonction pour prédire le choix optimal du robot
 def predict_robot_choice(user_choice):
+    model = train_model()
     choice_to_win = Win_condition(user_choice)
-    robot_choice = model.predict([[user_choice, choice_to_win]])
+    robot_choice = model.predict([[user_choice, 1]])
+    print(f"Choix de l'IA : {robot_choice} choix pour gagner : {choice_to_win}")
     return robot_choice[0]
