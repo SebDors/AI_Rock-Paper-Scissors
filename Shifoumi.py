@@ -69,7 +69,7 @@ def MaJExcel(ChoixJoueur, RobotChoice, Result):
     classeur.save("ResultatParties.xlsx")
 
 
-def Switch(JoueurToSwitch=None, RobotToSwitch=None, ResultatToSwitch=None):
+def Switch(JoueurToSwitch, RobotToSwitch, ResultatToSwitch):
     """
     Convert the input choices and result into corresponding numerical representations.
 
@@ -99,6 +99,8 @@ def Switch(JoueurToSwitch=None, RobotToSwitch=None, ResultatToSwitch=None):
             RobotSwitched = 1
         case "Scissors":
             RobotSwitched = 2
+        case _:
+            RobotSwitched = RobotToSwitch
 
     match ResultatToSwitch:
         case "Won !":
@@ -109,25 +111,36 @@ def Switch(JoueurToSwitch=None, RobotToSwitch=None, ResultatToSwitch=None):
             Switched = 2  # Draw
     return JoueurSwitched, RobotSwitched, Switched
 
-def Game2(ChoixJoueur, UserPoint, RobotPoint):
-    ChoixJoueur = Switch(ChoixJoueur)
-    RobotChoice = AIModel.predict_robot_choice(ChoixJoueur)
-    if ChoixJoueur == RobotChoice:
+def Switch_Str_To_Int(Str):
+    match Str:
+        case "Rock":
+            return 0
+        case "Paper":
+            return 1
+        case "Scissors":
+            return  2
+
+
+def Game2(ChoixJoueurStr, UserPoint, RobotPoint):
+    ChoixJoueurInt = Switch_Str_To_Int(ChoixJoueurStr)
+    AIChoice = AIModel.predict_robot_choice(ChoixJoueurInt)
+
+    if ChoixJoueurInt == AIChoice:
         Resultat = "Draw !"
-    elif ChoixJoueur == 0 and RobotChoice == 2:  # Pierre contre Ciseaux
+    elif ChoixJoueurInt == 0 and AIChoice == 2:  # Pierre contre Ciseaux
         Resultat = "Won !"
         UserPoint += 1
-    elif ChoixJoueur == 1 and RobotChoice == 0:  # Feuille contre Pierre
+    elif ChoixJoueurInt == 1 and AIChoice == 0:  # Feuille contre Pierre
         Resultat = "Won !"
         UserPoint += 1
-    elif ChoixJoueur == 2 and RobotChoice == 1:  # Ciseaux contre Feuille
+    elif ChoixJoueurInt == 2 and AIChoice == 1:  # Ciseaux contre Feuille
         Resultat = "Won !"
         UserPoint += 1
     else:
         RobotPoint += 1
         Resultat = "Lost !"
-    
-    JoueurNumber, RobotNumber, Resultatnumber = Switch(ChoixJoueur, RobotChoice, Resultat)
-    MaJExcel(JoueurNumber, RobotNumber, Resultatnumber)
-    return Resultat, UserPoint, RobotPoint, RobotChoice
 
+    JoueurNumber, AINumber, Resultatnumber = Switch(ChoixJoueurStr, AIChoice,Resultat)
+    MaJExcel(JoueurNumber, AINumber, Resultatnumber)
+
+    return Resultat, UserPoint, RobotPoint, AIChoice   
